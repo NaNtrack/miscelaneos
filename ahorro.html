@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title></title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+		<script src="js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+		<script type="text/javascript">
+			Number.prototype.formatMoney = function(c, d, t){
+				var n = this, c = isNaN(c = Math.abs(c)) ? 2 : c, d = d == undefined ? "," : d, t = t == undefined ? "." : t, s = n < 0 ? "-" : "", i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "", j = (j = i.length) > 3 ? j % 3 : 0;
+				return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+			};
+			function calcular () {
+				$('#resultado').html('');
+				var inicial = parseFloat($('#inputInicial').val());
+				var ahorro = parseFloat($('#inputAhorro').val());
+				var interes = parseFloat($('#inputInteres').val());
+				var meses = parseFloat($('#inputMeses').val());
+				var incentivo = parseFloat($('#inputIncentivo').val());
+				var total = inicial;
+				var normal = ahorro*meses+inicial;
+				var resultado = '';
+				for (var i = 0 ; i < meses ; i++) {
+					total += ahorro;
+					total *= (1+interes/100);
+					if(i>0&&i%12==0){
+						total *= (1+incentivo/100);
+					}
+					resultado += '<div>Mes '+(i+1)+': '+total.formatMoney(2,',','.')+'</div>';
+				}
+				$('#resultado').append('<div><b>Monto final ahorrado: '+total.formatMoney(2,',','.')+'</b> (+'+(total-normal).formatMoney(2,',','.')+')</div>'+resultado);
+				
+				return false;
+			}
+		</script>
+	</head>
+	<body>
+		<h1>Ahorro mensual</h1>
+		<form class="form-horizontal">
+			<div class="control-group">
+				<label class="control-label" for="inputInicial">Monto inicial</label>
+				<div class="controls">
+					<input type="number" id="inputInicial" min="10000" step="10000" placeholder="Ej: 10000">
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="inputAhorro">Ahorro mensual</label>
+				<div class="controls">
+					<input type="number" id="inputAhorro" min="10000" step="10000" placeholder="Ej: 300000">
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="inputInteres">Interes mensual</label>
+				<div class="controls">
+					<div class="input-append">
+						<input type="number" id="inputInteres" min="0.1" step="0.1" placeholder="Ej: 1">
+						<span class="add-on">%</span>
+					</div>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="inputIncentivo">Incentivo anual</label>
+				<div class="controls">
+					<div class="input-append">
+						<input type="number" id="inputIncentivo" min="0.1" step="0.1" placeholder="Ej: 15">
+						<span class="add-on">%</span>
+					</div>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="inputMeses">Meses</label>
+				<div class="controls">
+					<input type="number" id="inputMeses" min="1" step="1" placeholder="Ej: 1">
+				</div>
+			</div>
+			<div class="control-group">
+				<div class="controls">
+					<button class="btn" onclick="return calcular();">Calcular</button>
+				</div>
+			</div>
+		</form>
+		<div id="resultado"></div>
+	</body>
+</html>
